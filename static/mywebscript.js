@@ -1,12 +1,23 @@
-let RunSentimentAnalysis = ()=>{
-    textToAnalyze = document.getElementById("textToAnalyze").value;
+"use strict";
 
-    let xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            document.getElementById("system_response").innerHTML = xhttp.responseText;
-        }
-    };
-    xhttp.open("GET", "emotionDetector?textToAnalyze"+"="+textToAnalyze, true);
-    xhttp.send();
-}
+const RunSentimentAnalysis = async () => {
+    const input = document.getElementById("textToAnalyze");
+    const output = document.getElementById("system_response");
+    const textToAnalyze = input.value.trim();
+
+    if (!textToAnalyze) {
+        output.textContent = "Please enter some text to analyze.";
+        return;
+    }
+
+    output.textContent = "Analyzing...";
+    try {
+        const response = await fetch(
+            `/emotionDetector?textToAnalyze=${encodeURIComponent(textToAnalyze)}`
+        );
+        const result = await response.text();
+        output.textContent = result;
+    } catch (error) {
+        output.textContent = "Unable to contact the server. Please try again.";
+    }
+};
